@@ -1,2 +1,2 @@
 # pisces
-Pisces aquarium control system
+Pisces aquarium control system for Raspberry Pi
