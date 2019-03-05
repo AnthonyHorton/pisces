@@ -1,6 +1,8 @@
 # Main config file, because IP addresses, etc.
 config.yaml
 
+*.swp
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
