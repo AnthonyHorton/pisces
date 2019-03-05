@@ -1,0 +1,4 @@
+host: 0.0.0.0
+temperature_sensors:
+  water_temp: /sys/devices/w1_bus_master1/28-049859f521094bb/w1_slave
+  air_temp: /sys/devices/w1_bus_master1/28-08723aO974b9139/w1_slave

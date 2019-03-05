@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <meta http-equiv="refresh" content="60">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <title>Pisces on {{ host }}</title>
+  <body>
+    <div class="w3-container w3-blue">
+      <h1>Pisces v{{ version }} on {{ host }}</h1>
+      <p>Current time: {{ time }}</p>
+    </div>
+    <div class="w3-row-padding">
+      <div class="w3-half">
+        <h2>{{ water_temp }}&#8451;</h2>
+        <p>Water temperature</p>
+      </div>
+      <div class="w3-half">
+         <h2>{{ air_temp }}&#8451;</h2>
+         <p>Air temperature</p>
+      </div>
+    </div>
+  </body>
+</html>
+
