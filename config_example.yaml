@@ -1,4 +1,20 @@
-host: 0.0.0.0
-temperature_sensors:
-  water_temp: /sys/devices/w1_bus_master1/28-049859f521094bb/w1_slave
-  air_temp: /sys/devices/w1_bus_master1/28-08723aO974b9139/w1_slave
+sensors:
+  water_temp: /sys/devices/w1_bus_master1/28-011a37371faa/w1_slave
+  air_temp: /sys/devices/w1_bus_master1/28-01c437ed87aa/w1_slave
+
+temperature_control:
+  target_max: 27
+  target_min: 25
+  hysteresis: 1.0
+  good_gpio: 5
+  cooling_gpio: 4
+  heating_gpio: 27
+  interval: 60
+
+logging:
+  log_file: /var/log/pisces.log
+  interval: 300
+  
+webapp:
+  host: 0.0.0.0
+  interval: 60

@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html>
-  <meta http-equiv="refresh" content="60">
+  <meta http-equiv="refresh" content="{{ interval }}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <title>Pisces on {{ host }}</title>
   <body>
-    <div class="w3-container w3-blue">
+    <header class="w3-container w3-blue w3-margin-bottom">
       <h1>Pisces v{{ version }} on {{ host }}</h1>
       <p>Current time: {{ time }}</p>
-    </div>
-    <div class="w3-row-padding">
-      <div class="w3-half">
-        <h2>{{ water_temp }}&#8451;</h2>
-        <p>Water temperature</p>
+    </header>
+    <div class="w3-row-padding w3-margin-bottom">
+      <div class="w3-third">
+        <div class="w3-container w3-green w3-padding-16">
+          <h2>{{ water_temp }}&#8451;</h2>
+          <p>Water temperature</p>
+        </div>
       </div>
-      <div class="w3-half">
-         <h2>{{ air_temp }}&#8451;</h2>
-         <p>Air temperature</p>
+      <div class="w3-third">
+        <div class="w3-container w3-yellow w3-padding-16">
+          <h2>{{ air_temp }}&#8451;</h2>
+          <p>Air temperature</p>
+        </div>
+      </div>
+      <div class="w3-third">
+        <div class="w3-container w3-red w3-padding-16">
+          <h2>Fan on</h2>
+          <p>Yes.</p>
+        </div>
       </div>
     </div>
   </body>
