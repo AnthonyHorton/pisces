@@ -1,4 +1,3 @@
 flask
 gpiozero
-python-dateutil
 pyyaml

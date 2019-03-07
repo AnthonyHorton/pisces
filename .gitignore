@@ -1,6 +1,9 @@
 # Main config file, because IP addresses, etc.
 config.yaml
 
+# Data directory
+data
+
 *.swp
 
 # Byte-compiled / optimized / DLL files

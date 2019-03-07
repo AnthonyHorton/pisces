@@ -1,20 +1,64 @@
-sensors:
-  water_temp: /sys/devices/w1_bus_master1/28-011a37371faa/w1_slave
-  air_temp: /sys/devices/w1_bus_master1/28-01c437ed87aa/w1_slave
+temperature_sensors:
+  devices:
+    water_temp: /sys/devices/w1_bus_master1/28-011a37371faa/w1_slave
+    air_temp: /sys/devices/w1_bus_master1/28-01c437ed87aa/w1_slave
+  log_interval: 10
+
+webapp:
+  host: 0.0.0.0
+  refresh_interval: 60
 
 temperature_control:
   target_max: 27
   target_min: 25
   hysteresis: 1.0
-  good_gpio: 5
-  cooling_gpio: 4
-  heating_gpio: 27
-  interval: 60
+  good_led: 5
+  hot_led: 4
+  cold_led: 27
+  loop_interval: 60
 
 logging:
-  log_file: /var/log/pisces.log
-  interval: 300
-  
-webapp:
-  host: 0.0.0.0
-  interval: 60
+  version: 1
+  formatters:
+    short:
+      style: '{'
+      format: '{levelname:<8} {message}'
+    long:
+      style: '{'
+      format: '{asctime} {levelname:8} {module:10} {message}'
+    data:
+      style: '{'
+      format: '{asctime} {message}'
+      datefmt: '%Y-%m-%dT%H:%M:%S%z'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: short
+      level: INFO
+      stream: ext://sys.stdout
+    file:
+      class: logging.handlers.TimedRotatingFileHandler
+      formatter: long
+      level: DEBUG
+      filename: logs/pisces.log
+      when: midnight
+      interval: 7
+      backupCount: 1
+    data:
+      class: logging.handlers.TimedRotatingFileHandler
+      formatter: data
+      level: DEBUG
+      filename: data/pisces.dat
+      when: midnight
+      interval: 7
+      backupCount: 0
+  loggers:
+    system:
+      level: DEBUG
+      handlers:
+        - console
+        - file
+    data:
+      level: DEBUG
+      handlers:
+        - data
