@@ -3,15 +3,38 @@ import time
 import math
 from collections import OrderedDict
 from multiprocessing import Process, Event
+from datetime import datetime
 
+import numpy as np
 
 from pisces.base import PiscesBase
+from pisces.utils import get_last_n_lines
 
+
+def read_log(filename, n_lines=1, max_line_size=120):
+    log_names = ('log_time', 'water_temp', 'air_temp')
+    log_dtypes = (datetime, np.float, np.float)
+    time_converter = lambda t: datetime.strptime(t.decode(), "%Y-%m-%dT%H:%M:%S%z")
+
+    log_lines = get_last_n_lines(filename, n_lines, max_line_size)
+    log_data = np.genfromtxt(log_lines,
+                             names=log_names,
+                             dtype=log_dtypes,
+                             converters={'log_time': time_converter})
+
+    if n_lines == 1:
+        # Structured 1D arrays with 1 element lose their shape,
+        # preventing access to values via sa[field_name][0].
+        # Need to give it its shape back to allow access in the
+        # same way as multi-element structured arrays.
+        log_data = log_data.reshape((1,))
+    return log_data
+ 
 
 class TemperatureSensors(PiscesBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.data_logger = logging.getLogger('data')
+        self.data_logger = logging.getLogger('pisces_data')
         self._log_interval = int(self.config['temperature_sensors']['log_interval'])
         if self._log_interval < 1:
             msg = "Temperature sensor 'log_interval' must be integer > 0."

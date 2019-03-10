@@ -53,12 +53,13 @@ logging:
       interval: 7
       backupCount: 0
   loggers:
-    system:
+    pisces_system:
       level: DEBUG
       handlers:
         - console
         - file
-    data:
+    pisces_data:
       level: DEBUG
       handlers:
         - data
+
