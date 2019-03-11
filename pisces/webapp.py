@@ -51,7 +51,7 @@ def index():
         cooling_colour = 'w3-yellow'
     else:
         cooling_status = 'Off'
-        cooling_colour = 'black'
+        cooling_colour = 'w3-black'
     
     refresh_interval = current_app.config['pisces_config']['webapp']['refresh_interval']
     template_data = {'version': version,
