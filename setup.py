@@ -5,7 +5,7 @@ with open("README.md",  "r") as fh:
 
 setuptools.setup(
     name="pisces",
-    version="0.6",
+    version="0.6.0",
     author="Anthony Horton",
     author_email="anthony.horton@drhotdog.net",
     description="Pisces aquarium control system for Raspberry Pi",
