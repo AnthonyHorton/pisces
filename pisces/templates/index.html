@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <meta http-equiv="refresh" content="{{ interval }}">
+  <meta http-equiv="refresh" content="{{ refresh_interval }}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <title>Pisces on {{ hostname }}</title>
@@ -11,19 +11,19 @@
     </header>
     <div class="w3-row-padding w3-margin-bottom">
       <div class="w3-third">
-        <div class="w3-container w3-blue w3-padding-16">
+        <div class="w3-container w3-blue w3-margin-bottom w3-padding-16">
           <p>Time of last sensor reading:</p>
           <h2>{{  last_time.strftime('%H:%M')  }}</h2>
         </div>
       </div>
       <div class="w3-third">
-        <div class="w3-container w3-green w3-padding-16">
+        <div class="w3-container w3-green w3-margin-bottom w3-padding-16">
           <p>Water temperature:</p>
           <h2>{{ "%2.1f" | format(water_temp) }}&#8451;</h2>
         </div>
       </div>
       <div class="w3-third">
-        <div class="w3-container w3-yellow w3-padding-16">
+        <div class="w3-container w3-yellow w3-margin-bottom w3-padding-16">
           <p>Air temperature:</p>
           <h2>{{ "%2.1f" | format(air_temp) }}&#8451;</h2>
         </div>
