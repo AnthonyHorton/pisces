@@ -12,8 +12,8 @@ from pisces.utils import get_last_n_lines
 
 
 def read_log(filename, n_lines=1, max_line_size=120):
-    log_names = ('log_time', 'water_temp', 'air_temp')
-    log_dtypes = (datetime, np.float, np.float)
+    log_names = ('log_time', 'water_temp', 'air_temp', 'cooler_on')
+    log_dtypes = (datetime, np.float, np.float, bool)
     time_converter = lambda t: datetime.strptime(t.decode(), "%Y-%m-%dT%H:%M:%S%z")
 
     log_lines = get_last_n_lines(filename, n_lines, max_line_size)
@@ -32,20 +32,21 @@ def read_log(filename, n_lines=1, max_line_size=120):
  
 
 class TemperatureSensors(PiscesBase):
-    def __init__(self, **kwargs):
+    def __init__(self, pisces_core, **kwargs):
         super().__init__(**kwargs)
+        self._core = pisces_core
         self.data_logger = logging.getLogger('pisces_data')
         self._log_interval = int(self.config['temperature_sensors']['log_interval'])
         if self._log_interval < 1:
             msg = "Temperature sensor 'log_interval' must be integer > 0."
-            self.logger.error(msg)
+            self.logger.critical(msg)
             raise ValueError(msg)
         self._log_file = self.config['logging']['handlers']['data']['filename']
         self._stop_event = Event()
         self._stop_event.set()
         self.logger.debug("Temperature sensors initialised.")
 
-    def get_temperatures(self):
+    def _get_temperatures(self):
         temperatures = OrderedDict()
         for name, device in self.config['temperature_sensors']['devices'].items():
             try:
@@ -87,8 +88,9 @@ class TemperatureSensors(PiscesBase):
     def _log_temperatures(self):
         self.logger.info("Logging temperatures to {}".format(self._log_file))
         while not self._stop_event.is_set():
-            temperatures = self.get_temperatures()
+            temperatures = self._get_temperatures()
             data_string = " ".join(("{:2.3f}".format(T) for T in temperatures.values()))
+            data_string = "{} {:<5}".format(data_string, self._core.cooler_on)
             self.data_logger.info(data_string)
             for i in range(self._log_interval):
                 if self._stop_event.is_set():

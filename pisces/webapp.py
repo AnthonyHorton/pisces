@@ -46,14 +46,12 @@ def index():
     else:
         air_colour = 'w3-green'
 
-    cooling_output = current_app.config['pisces_config']['temperature_control']['cooling']
-    with DigitalOutputDevice(cooling_output, initial_value=None) as cooling:
-        if cooling.value:
-            cooling_status = "On"
-            cooling_colour = "w3-yellow"
-        else:
-            cooling_status = "Off"
-            cooling_colour = "w3-black"
+    if last_reading['cooler_on']:
+        cooling_status = 'On'
+        cooling_colour = 'w3-yellow'
+    else:
+        cooling_status = 'Off'
+        cooling_colour = 'black'
     
     refresh_interval = current_app.config['pisces_config']['webapp']['refresh_interval']
     template_data = {'version': version,

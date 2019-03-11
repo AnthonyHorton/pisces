@@ -1,5 +1,5 @@
 import time
-from subprocess import Process, Event
+from multiprocessing import Process, Event
 
 from gpiozero import DigitalOutputDevice, LED
 
@@ -7,17 +7,55 @@ from pisces.base import PiscesBase
 
 
 class TemperatureControl(PiscesBase):
-    def __init__(self, temperature_sensors, **kwargs):
+    def __init__(self, pisces_core, **kwargs):
         super().__init__(**kwargs)
-        self._temperature_sensors = temperature_sensors
+        self._core = pisces_core
+
         self._loop_interval = int(self.config['temperature_control']['loop_interval'])
-        if self._loop_inteval < 1:
+        if self._loop_interval < 1:
             msg = "Temperature control 'loop_interval' must be integer > 0."
-            self.logger.error(msg)
+            self.logger.critical(msg)
             raise ValueError(msg)
+
+        self._target_max = float(self.config['temperature_control']['target_max'])
+        self._target_min = float(self.config['temperature_control']['target_min'])
+        if self._target_max <= self._target_min:
+            msg = "Temperature control 'target_min' must be <= 'target_max'."
+            self.logger.critical(msg)
+            raise ValueError(msg)
+
+        self._hysteresis = float(self.config['temperature_control']['hysteresis'])
+        if self._hysteresis < 0:
+            msg = "Temperature control 'hysteresis' must be > 0."
+            self.logger.critical(msg)
+            raise ValueError(msg)
+        elif self._hysteresis > (self._target_max - self._target_min):
+            msg = "Temperature control 'hysteresis' must be < ('target_max' - 'target_min')."
+            self.logger.critical(msg)
+            raise ValueError(msg)
+
+        self._leds = {}
+        for key, value in self.config['temperature_control'].items():
+            if key.endswith('_led'):
+                self._leds[key] = LED(int(value), initial_value=None)
+
+        cooling_output = self.config['temperature_control'].get('cooling')
+        if cooling_output:
+            self._cooler = DigitalOutputDevice(int(cooling_output), initial_value=None)
+        else:
+            self._cooler = None
+
         self._stop_event = Event()
         self._stop_event.set()
+
         self.logger.debug("Temperature control initialised.")
+
+    @property
+    def cooler_on(self):
+        if not self._cooler or not self._cooler.value:
+            return False
+        else:
+            return True
 
     def start_control(self):
         if not self._stop_event.is_set():
@@ -49,12 +87,12 @@ class TemperatureControl(PiscesBase):
         self.logger.info("Temperature control stopped.")
         
     def _update(self):
-        temperatures = self.temperature_sensors.get_temperatures()
-        if temperatures['water_temp'] > self.config['temperature_control']['target_max']:
+        temperatures = self._core.current_temperatures
+        if temperatures['water_temp'] > self._target_max:
             self._set_leds({'cold_led': False,
                             'good_led': False,
                             'hot_led': True})
-        elif temperatures['water_temp'] < self.config['temperature_control']['target_min']:
+        elif temperatures['water_temp'] < self._target_min:
             self._set_leds({'cold_led': True,
                             'good_led': False,
                             'hot_led': False})
@@ -63,21 +101,22 @@ class TemperatureControl(PiscesBase):
                             'good_led': True,
                             'hot_led': False})
 
-        cooling_ouput = self.config['temperature_control'].get('cooling')
-        if cooling_output:
-            with DigitalOutputDevice(cooling_output, initial_value=None) as cooling_device:
-                if cooling_device.value:
-                    if temperatures['water_temp'] < (self.config['temperature_control']['target_max'] - /
-                        self.config['temperature_control']['hysteresis']):
-                        cooling_device.off()
-                else:
-                    if temperatures['water_temp'] > self.config['temperature_control']['target_max']:
-                        cooling_device.on()
+        if self._cooler:
+            if self._cooler.value:
+                if temperatures['water_temp'] < (self._target_max - self._hysteresis):
+                    self._cooler.off()
+                    self._set_leds({'cooling_led': False})
+                    self.logger.info("Cooling turned off.")
+            else:
+                if temperatures['water_temp'] > self._target_max:
+                    self._cooler.on()
+                    self._set_leds({'cooling_led': True})
+                    self.logger.info("Cooling turned on.")
 
     def _set_leds(self, settings):
         for led_name, led_setting in settings.items():
-            with LED(self.config['temperature_control'].get(led_name), initial_value=None) as led_device:
-                if led_setting:
-                     led_device.on()
-                else:
-                     led_device.off()
+            if led_setting:
+                self._leds[led_name].on()
+            else:
+                self._leds[led_name].off()
+

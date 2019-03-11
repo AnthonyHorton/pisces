@@ -14,75 +14,56 @@ class Pisces(PiscesBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs) # Load config and configure logging
         self.logger.info("Pisces v{}".format(self.__version__))
-        if 'temperature_sensors' in self.config:
-            self.temperature_sensors = TemperatureSensors()
-            if 'temperature_control' in self.config:
-                self.temperature_control = TemperatureControl(self.temperature_sensors)
-            if 'webapp' in self.config:
-                self.webapp_process = None
+        self._temperature_sensors = TemperatureSensors(self)
+        self._temperature_control = TemperatureControl(self)
+        self._webapp_process = None
         self.start_all()
 
     def __del__(self):
         self.stop_all()
 
+    @property
+    def current_temperatures(self):
+        return self._temperature_sensors._get_temperatures()
+
+    @property
+    def cooler_on(self):
+        return self._temperature_control.cooler_on
+
     def start_all(self):
-        if 'temperature_sensors' in self.config:
-            self.start_logging()
-            if 'temperature_control' in self.config:
-                self.start_control()
-            if 'webapp' in self.config:
-                self.start_webapp()
+        self.start_logging()
+        self.start_control()
+        self.start_webapp()
 
     def stop_all(self):
-        if 'temperature_sensors' in self.config:
-            self.temperature_sensors.stop_logging()
-            if 'temperature_control' in self.config:
-                self.stop_control()
-            if 'webapp' in self.config:
-                self.stop_webapp()
+        self.stop_logging()
+        self.stop_control()
+        self.stop_webapp()
             
     def start_logging(self):
-        if 'temperature_sensors' in self.config:
-            self.temperature_sensors.start_logging()
-        else:
-            self.logger.error("No temperature sensors configured.")
+        self._temperature_sensors.start_logging()
 
     def stop_logging(self):
-        if 'temperature_sensors' in self.config:
-            self.temperature_sensors.stop_logging()
-        else:
-            self.logger.error("No temperature sensors configured.")
-
+        self._temperature_sensors.stop_logging()
+  
     def start_control(self):
-        if 'temperature_control' in self.config:
-            self.temperature_control.start_control()
-        else:
-            self.logger.error("No temperature control configured.")
+        self._temperature_control.start_control()
 
     def stop_control(self):
-        if 'temperature_control' in self.config:
-            self.temperature_control.stop_control()
-        else:
-            self.logger.error("No temperature control configured.")
+        self._temperature_control.stop_control()
 
     def start_webapp(self):
-        if 'webapp' in self.config:
-            if self.webapp_process is None:
-                webapp_cmds = ('python', 'pisces/webapp.py')
-                self.webapp_process = subprocess.Popen(webapp_cmds)
-                self.logger.info("Web app started.")
-            else:
-                self.logger.warning("Web app already running.")
+        if self._webapp_process is None:
+            webapp_cmds = ('python', 'pisces/webapp.py')
+            self._webapp_process = subprocess.Popen(webapp_cmds)
+            self.logger.info("Web app started.")
         else:
-            self.logger.error("Web app not configured.")
+            self.logger.warning("Web app already running.")
 
     def stop_webapp(self):
-        if 'webapp' in self.config:
-            if self.webapp_process is not None:
-                exit_code = end_process(self.webapp_process)
-                self.logger.info("Web app stopped ()".format(exit_code))
-                self.webapp_process = None
-            else:
-                self.logger.warning("Web app not running.")
+        if self._webapp_process is not None:
+            exit_code = end_process(self._webapp_process)
+            self.logger.info("Web app stopped ()".format(exit_code))
+            self._webapp_process = None
         else:
-            self.logger.error("Web app not configured.")
+            self.logger.warning("Web app not running.")
