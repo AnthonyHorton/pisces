@@ -82,7 +82,7 @@ class TemperatureSensors(PiscesBase):
             if self._logger.exitcode is None:
                 self._logger.terminate()
                 if self._logger.exitcode is None:
-                    self.temperature_logger.kill()
+                    self._logger.kill()
 
     def _log_temperatures(self):
         self.logger.info("Logging temperatures to {}".format(self._log_file))

@@ -3,6 +3,7 @@ import subprocess
 
 from pisces.base import PiscesBase
 from pisces.sensors import TemperatureSensors
+from pisces.control import TemperatureControl
 from pisces.utils import end_process
 
 class Pisces(PiscesBase):
@@ -10,11 +11,13 @@ class Pisces(PiscesBase):
 
     Stuff.
     """
-    def __init__(self, *kwargs):
-        super().__init__(*kwargs) # Load config and configure logging
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs) # Load config and configure logging
         self.logger.info("Pisces v{}".format(self.__version__))
         if 'temperature_sensors' in self.config:
             self.temperature_sensors = TemperatureSensors()
+            if 'temperature_control' in self.config:
+                self.temperature_control = TemperatureControl(self.temperature_sensors)
             if 'webapp' in self.config:
                 self.webapp_process = None
         self.start_all()
@@ -25,12 +28,16 @@ class Pisces(PiscesBase):
     def start_all(self):
         if 'temperature_sensors' in self.config:
             self.start_logging()
+            if 'temperature_control' in self.config:
+                self.start_control()
             if 'webapp' in self.config:
                 self.start_webapp()
 
     def stop_all(self):
         if 'temperature_sensors' in self.config:
             self.temperature_sensors.stop_logging()
+            if 'temperature_control' in self.config:
+                self.stop_control()
             if 'webapp' in self.config:
                 self.stop_webapp()
             
@@ -45,6 +52,18 @@ class Pisces(PiscesBase):
             self.temperature_sensors.stop_logging()
         else:
             self.logger.error("No temperature sensors configured.")
+
+    def start_control(self):
+        if 'temperature_control' in self.config:
+            self.temperature_control.start_control()
+        else:
+            self.logger.error("No temperature control configured.")
+
+    def stop_control(self):
+        if 'temperature_control' in self.config:
+            self.temperature_control.stop_control()
+        else:
+            self.logger.error("No temperature control configured.")
 
     def start_webapp(self):
         if 'webapp' in self.config:
