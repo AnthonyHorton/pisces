@@ -3,7 +3,13 @@ temperature_sensors:
     water_temp: /sys/devices/w1_bus_master1/28-011a37371faa/w1_slave
     air_temp: /sys/devices/w1_bus_master1/28-01c437ed87aa/w1_slave
   log_interval: 300
-
+  plotting:
+    filename_root: pisces/static/temperature_plot
+    temp_limits:
+      - 23
+      - 28
+    duration: 24  # Hours
+  
 webapp:
   host: 0.0.0.0
   refresh_interval: 150

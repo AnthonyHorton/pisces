@@ -57,7 +57,7 @@ def index():
     template_data = {'version': version,
                      'hostname': hostname,
                      'time': time_string,
-                     'last_time': last_reading['log_time'].time(),
+                     'last_time': last_reading['log_time'],
                      'last_colour': last_colour,
                      'last_mins': last_mins,
                      'water_temp': last_reading['water_temp'],
