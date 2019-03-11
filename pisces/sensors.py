@@ -90,7 +90,7 @@ class TemperatureSensors(PiscesBase):
         while not self._stop_event.is_set():
             temperatures = self._get_temperatures()
             data_string = " ".join(("{:2.3f}".format(T) for T in temperatures.values()))
-            data_string = "{} {:<5}".format(data_string, self._core.cooler_on)
+            data_string = "{} {:<5}".format(data_string, str(self._core.cooler_on))
             self.data_logger.info(data_string)
             for i in range(self._log_interval):
                 if self._stop_event.is_set():
