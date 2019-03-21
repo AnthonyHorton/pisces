@@ -6,8 +6,7 @@ from gpiozero import DigitalOutputDevice
 from flask import Flask, render_template, current_app
 
 from pisces.base import PiscesBase
-from pisces.utils import load_config
-from pisces.sensors import read_log
+from pisces.utils import load_config, read_log
 
 
 app = Flask(__name__)

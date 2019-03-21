@@ -1,10 +1,16 @@
 import os
 import os.path
+from glob import glob
 import subprocess
 import signal
 from warnings import warn
+from datetime import datetime
 
 import yaml
+import numpy as np
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+
 
 def load_config(config_path, path_root=None):
     if not os.path.isabs(config_path) and path_root:
@@ -73,6 +79,65 @@ def get_last_n_lines(filename, n_lines=1, max_line_size=120):
             buffer_size += max_line_size
 
     return lines[-n_lines:]
+
+
+def read_log(filename, n_lines=1, max_line_size=120):
+    log_names = ('log_time', 'water_temp', 'air_temp', 'cooler_on')
+    log_dtypes = (datetime, np.float, np.float, bool)
+    time_converter = lambda t: datetime.strptime(t.decode(), "%Y-%m-%dT%H:%M:%S%z")
+
+    log_lines = get_last_n_lines(filename, n_lines, max_line_size)
+    if len(log_lines) < n_lines:
+        # Not enough lines in the current temperature log file. Look for next oldest one and get more lines from that.
+        old_log_files = glob("{}.20*".format(filename))
+        if old_log_files:
+            # Found some older logs. Sort newest first.
+            old_log_files.sort(reverse=True)
+            # Get lines from old log files until we have n lines.
+            for old_log_file in old_log_files:
+                old_lines = get_last_n_lines(old_log_file, n_lines - len(log_lines), max_line_size)
+                log_lines = old_lines + log_lines
+                if len(log_lines) >= n_lines:
+                    break
+    
+    log_data = np.genfromtxt(log_lines,
+                             names=log_names,
+                             dtype=log_dtypes,
+                             converters={'log_time': time_converter})
+
+    if n_lines == 1:
+        # Structured 1D arrays with 1 element lose their shape,
+        # preventing access to values via sa[field_name][0].
+        # Need to give it its shape back to allow access in the
+        # same way as multi-element structured arrays.
+        log_data = log_data.reshape((1,))
+    return log_data
+
+
+def plot_log(log_filename='data/pisces.dat',
+             log_interval=300,
+             filename_root='pisces/static/temperature',
+             temp_limits = [23, 28],
+             duration=24):
+    for old_plot in glob("{}_*.png".format(filename_root)):
+        os.unlink(old_plot)
+    log_data = read_log(log_filename, n_lines=(duration * 3600 / log_interval))
+    fig = Figure()
+    FigureCanvas(fig)
+    fig.set_size_inches(12, 8)
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(log_data['log_time'], log_data['water_temp'], 'b-', label='Water temperature')
+    ax.plot(log_data['log_time'], log_data['air_temp'], 'c-', label='Air temperature')
+    ax.legend(loc=0)
+    ax.set_ylabel('Temperature / degC')
+    ax.set_ylim(*temp_limits)
+    ax.set_title("Temperatures over {} hours up to {}".format(duration, log_data[-1]['log_time']))
+    fig.tight_layout()
+    fig.savefig("{}_{}.png".format(filename_root,
+                                   log_data[-1]['log_time'].strftime('%Y-%m-%dT%H:%M:%S%z')),
+                transparent=False)
+    fig.clf()
+    del fig
 
 
 def end_process(proc):
