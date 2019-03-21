@@ -105,12 +105,10 @@ class TemperatureControl(PiscesBase):
             if self._cooler.value:
                 if temperatures['water_temp'] < (self._target_max - self._hysteresis):
                     self._cooler.off()
-                    self._set_leds({'cooling_led': False})
                     self.logger.info("Cooling turned off.")
             else:
                 if temperatures['water_temp'] > self._target_max:
                     self._cooler.on()
-                    self._set_leds({'cooling_led': True})
                     self.logger.info("Cooling turned on.")
 
     def _set_leds(self, settings):
