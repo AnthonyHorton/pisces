@@ -103,7 +103,8 @@ def read_log(filename, n_lines=1, max_line_size=120):
     log_data = np.genfromtxt(log_lines,
                              names=log_names,
                              dtype=log_dtypes,
-                             converters={'log_time': time_converter})
+                             converters={'log_time': time_converter},
+                             filling_values=np.nan)
 
     if n_lines == 1:
         # Structured 1D arrays with 1 element lose their shape,

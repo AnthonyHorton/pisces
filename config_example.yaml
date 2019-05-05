@@ -6,8 +6,8 @@ temperature_sensors:
   plotting:
     filename_root: pisces/static/temperature_plot
     temp_limits:
-      - 23
-      - 28
+      - 19
+      - 29
     duration: 24  # Hours
   
 webapp:
@@ -17,13 +17,18 @@ webapp:
 temperature_control:
   target_max: 26
   target_min: 25
-  hysteresis: 0.5
-  good_led: 5
-  hot_led: 27
-  cold_led: 4
+  hysteresis: 0.25
+  good_led: 20
+  hot_led: 21
+  cold_led: 19
   cooling: 6
-  cooling_led: 17
   loop_interval: 60
+
+lights:
+  output: 5
+  time_on: 07:30
+  time_off: 19:30
+  button: 17
 
 logging:
   version: 1
@@ -50,15 +55,13 @@ logging:
       level: DEBUG
       filename: logs/pisces.log
       when: midnight
-      interval: 7
-      backupCount: 1
+      backupCount: 0
     data:
       class: logging.handlers.TimedRotatingFileHandler
       formatter: data
       level: DEBUG
       filename: data/pisces.dat
       when: midnight
-      interval: 7
       backupCount: 0
   loggers:
     pisces_system:
@@ -70,5 +73,4 @@ logging:
       level: DEBUG
       handlers:
         - data
-
 
