@@ -51,7 +51,14 @@ def index():
     else:
         cooling_status = 'Off'
         cooling_colour = 'w3-black'
-    
+
+    if last_reading['lights_on']:
+        lights_status = 'On'
+        lights_colour = 'w3-green'
+    else:
+        lights_status = 'Off'
+        lights_colour = 'w3-black'
+
     refresh_interval = current_app.config['pisces_config']['webapp']['refresh_interval']
     template_data = {'version': version,
                      'hostname': hostname,
@@ -65,6 +72,8 @@ def index():
                      'air_colour': air_colour,
                      'cooling_status': cooling_status,
                      'cooling_colour': cooling_colour,
+                     'lights_status': lights_status,
+                     'lights_colour': light_colour,
                      'refresh_interval': refresh_interval}
     return render_template('index.html', **template_data)
 

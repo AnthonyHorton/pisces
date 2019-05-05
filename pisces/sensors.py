@@ -68,6 +68,7 @@ class TemperatureSensors(PiscesBase):
             temperatures = self._get_temperatures()
             data_string = " ".join(("{:2.3f}".format(T) for T in temperatures.values()))
             data_string = "{} {:<5}".format(data_string, str(self._core.cooler_on))
+            data_string = "{} {:<5}".format(data_string, str(self._core.lights_on))
             self.data_logger.info(data_string)
             try:
                 plot_log(log_filename=self._log_file,

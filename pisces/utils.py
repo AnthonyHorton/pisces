@@ -82,8 +82,8 @@ def get_last_n_lines(filename, n_lines=1, max_line_size=120):
 
 
 def read_log(filename, n_lines=1, max_line_size=120):
-    log_names = ('log_time', 'water_temp', 'air_temp', 'cooler_on')
-    log_dtypes = (datetime, np.float, np.float, bool)
+    log_names = ('log_time', 'water_temp', 'air_temp', 'cooler_on', 'lights_on')
+    log_dtypes = (datetime, np.float, np.float, bool, bool)
     time_converter = lambda t: datetime.strptime(t.decode(), "%Y-%m-%dT%H:%M:%S%z")
 
     log_lines = get_last_n_lines(filename, n_lines, max_line_size)
@@ -99,7 +99,7 @@ def read_log(filename, n_lines=1, max_line_size=120):
                 log_lines = old_lines + log_lines
                 if len(log_lines) >= n_lines:
                     break
-    
+
     log_data = np.genfromtxt(log_lines,
                              names=log_names,
                              dtype=log_dtypes,

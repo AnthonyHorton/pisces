@@ -85,7 +85,7 @@ class TemperatureControl(PiscesBase):
                     break
                 time.sleep(1)
         self.logger.info("Temperature control stopped.")
-        
+
     def _update(self):
         temperatures = self._core.current_temperatures
         if temperatures['water_temp'] > self._target_max:
@@ -117,4 +117,3 @@ class TemperatureControl(PiscesBase):
                 self._leds[led_name].on()
             else:
                 self._leds[led_name].off()
-
