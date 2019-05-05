@@ -10,36 +10,34 @@
       <p>Current time: {{ time }}</p>
     </header>
     <div class="w3-row-padding w3-margin-bottom">
-      <div class="w3-quarter">
+      <div class="w3-col" style="width:25%">
         <div class="w3-container {{ last_colour }} w3-margin-bottom w3-padding-16">
           <p>Time of last sensor reading:</p>
           <h2>{{ last_time.strftime('%H:%M') }} ({{ "%d" | format(last_mins) }} mins ago)</h2>
         </div>
       </div>
-      <div class="w3-three-quarter w3-container">
-        <div class="w3-quarter">
-          <div class="w3-container {{ water_colour }} w3-margin-bottom w3-padding-16">
-            <p>Water temperature:</p>
-            <h2>{{ "%2.1f" | format(water_temp) }}&#8451;</h2>
-          </div>
+      <div class="w3-col" style="width:18%">
+        <div class="w3-container {{ water_colour }} w3-margin-bottom w3-padding-16">
+          <p>Water temperature:</p>
+          <h2>{{ "%2.1f" | format(water_temp) }}&#8451;</h2>
         </div>
-        <div class="w3-quarter">
-          <div class="w3-container {{ air_colour }} w3-margin-bottom w3-padding-16">
-            <p>Air temperature:</p>
-            <h2>{{ "%2.1f" | format(air_temp) }}&#8451;</h2>
-          </div>
+      </div>
+      <div class="w3-col" style="width:18%">
+        <div class="w3-container {{ air_colour }} w3-margin-bottom w3-padding-16">
+          <p>Air temperature:</p>
+          <h2>{{ "%2.1f" | format(air_temp) }}&#8451;</h2>
         </div>
-        <div class="w3-quarter">
-          <div class="w3-container {{ cooling_colour }} w3-margin-bottom w3-padding-16">
-            <p>Cooling:</p>
-            <h2>{{ cooling_status }}</h2>
-          </div>
+      </div>
+      <div class="w3-col" style="width:18%">
+        <div class="w3-container {{ cooling_colour }} w3-margin-bottom w3-padding-16">
+          <p>Cooling:</p>
+          <h2>{{ cooling_status }}</h2>
         </div>
-        <div class="w3-quarter">
-          <div class="w3-container {{ lights_colour }} w3-margin-bottom w3-padding-16">
-            <p>Lights:</p>
-            <h2>{{ lights_status }}</h2>
-          </div>
+      </div>
+      <div class="w3-col" style="width:18%">
+        <div class="w3-container {{ lights_colour }} w3-margin-bottom w3-padding-16">
+          <p>Lights:</p>
+          <h2>{{ lights_status }}</h2>
         </div>
       </div>
     </div>

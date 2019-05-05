@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import datetime, time
 
 from gpiozero import DigitalOutputDevice, TimeOfDay, Button
 
@@ -10,8 +10,10 @@ class LightsControl(PiscesBase):
         super().__init__(**kwargs)
 
         self._output = DigitalOutputDevice(int(self.config['lights']['output']), initial_value=None)
-        self._time_on = time.fromisoformat(self.config['lights']['time_on'])
-        self._time_off = time.fromisoformat(self.config['lights']['time_off'])
+        self._time_on = datetime.strptime(self.config['lights']['time_on'],
+                                          "%H:%M").time()
+        self._time_off = datetime.strptime(self.config['lights']['time_off'],
+                                           "%H:%M").time()
         self._update_timer()
 
         button_pin = self.config['lights'].get('button')
@@ -34,7 +36,7 @@ class LightsControl(PiscesBase):
     @time_on.setter
     def time_on(self, on_time):
         if not isinstance(on_time, time):
-            on_time = time.fromisoformat(on_time)
+            on_time = datetime.strptime(on_time, "%H:%M").time()
         self._time_on = on_time
         self._update_timer()
 
@@ -45,7 +47,7 @@ class LightsControl(PiscesBase):
     @time_off.setter
     def time_off(self, off_time):
         if not isinstance(off_time, time):
-            off_time = time.fromisoformat(off_time):
+            off_time = datetime.strptime(off_time, "%H:%M").time()
         self._time_on = on_time
         self._update_timer()
 
@@ -56,7 +58,7 @@ class LightsControl(PiscesBase):
         self._output.off()
 
     def start_timer(self):
-        if self._output.source not None:
+        if self._output.source is not None:
             self.logger.warning("Lights timer already running.")
         else:
             self._output.source = self._timer
@@ -64,7 +66,7 @@ class LightsControl(PiscesBase):
             self.logger.info("Lights timer started.")
 
     def stop_timer(self):
-        if self._ouput.source is None:
+        if self._output.source is None:
             self.logger.warning("Lights timer not running.")
         else:
             self._output.source = None

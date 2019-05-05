@@ -26,8 +26,8 @@ temperature_control:
 
 lights:
   output: 5
-  time_on: 07:30
-  time_off: 19:30
+  time_on: '07:30'
+  time_off: '19:30'
   button: 17
 
 logging:

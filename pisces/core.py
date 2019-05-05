@@ -17,7 +17,7 @@ class Pisces(PiscesBase):
         self.logger.info("Pisces v{}".format(self.__version__))
         self._temperature_sensors = TemperatureSensors(self)
         self._temperature_control = TemperatureControl(self)
-        self._lights_control = LightsControl(self)
+        self._lights_control = LightsControl()
         self._webapp_process = None
         self.start_all()
 

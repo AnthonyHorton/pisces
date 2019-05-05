@@ -73,7 +73,7 @@ def index():
                      'cooling_status': cooling_status,
                      'cooling_colour': cooling_colour,
                      'lights_status': lights_status,
-                     'lights_colour': light_colour,
+                     'lights_colour': lights_colour,
                      'refresh_interval': refresh_interval}
     return render_template('index.html', **template_data)
 
