@@ -19,7 +19,7 @@ class LightsControl(PiscesBase):
         button_pin = self.config['lights'].get('button')
         if button_pin:
             self._button = Button(int(button_pin))
-            self._button.when_pressed = self._output.toggle
+            self._button.when_pressed = self._button_callback
         else:
             self._button = None
 
@@ -51,6 +51,10 @@ class LightsControl(PiscesBase):
         self._time_on = on_time
         self._update_timer()
 
+    @property
+    def timer_on(self):
+        return self._output.source is not None
+
     def on(self):
         self._output.on()
 
@@ -58,7 +62,7 @@ class LightsControl(PiscesBase):
         self._output.off()
 
     def start_timer(self):
-        if self._output.source is not None:
+        if self.timer_on:
             self.logger.warning("Lights timer already running.")
         else:
             self._output.source = self._timer
@@ -66,11 +70,26 @@ class LightsControl(PiscesBase):
             self.logger.info("Lights timer started.")
 
     def stop_timer(self):
-        if self._output.source is None:
+        if not self.timer_on:
             self.logger.warning("Lights timer not running.")
         else:
             self._output.source = None
             self.logger.info("Lights timer stopped.")
 
+    def toggle_timer(self):
+        if self.timer_on:
+            self.stop_timer()
+        else:
+            self.start_timer()
+
     def _update_timer(self):
         self._timer = TimeOfDay(self._time_on, self._time_off, utc=False)  # Work in local time
+
+    def _button_callback(self):
+        # Button press toggles both light status & timer status so that the time doesn't
+        # revert the lights status within the following minute. This does require the user to
+        # remember to press the button a second time to restore the timer.
+        self.toggle_timer()
+        self._output.toggle()
+        self.logger.debug("Button pressed - Lights on: {}, Timer on: {}".format(self.is_on,
+                                                                                self.timer_on))
