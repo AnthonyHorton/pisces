@@ -18,7 +18,7 @@ class LightsControl(PiscesBase):
 
         button_pin = self.config['lights'].get('button')
         if button_pin:
-            self._button = Button(int(button_pin))
+            self._button = Button(int(button_pin), bounce_time=0.1)
             self._button.when_pressed = self._button_callback
         else:
             self._button = None
@@ -57,9 +57,15 @@ class LightsControl(PiscesBase):
 
     def on(self):
         self._output.on()
+        self.logger.debug("Lights turned on.")
 
     def off(self):
         self._output.off()
+        self.logger.debug("Lights turned off.")
+
+    def toggle(self):
+        self._output.toggle()
+        self.logger.debug("Lights toggled.")
 
     def start_timer(self):
         if self.timer_on:
@@ -83,13 +89,21 @@ class LightsControl(PiscesBase):
             self.start_timer()
 
     def _update_timer(self):
-        self._timer = TimeOfDay(self._time_on, self._time_off, utc=False)  # Work in local time
+        self._timer = TimeOfDay(self.time_on, self.time_off, utc=False)  # Work in local time
+        self.logger.info("Light timer set - On: {}, Off: {}.".format(self.time_on.strftime("%H:%M"),
+                                                                               self.time_off.strftime("%H:%M")))
 
     def _button_callback(self):
         # Button press toggles both light status & timer status so that the time doesn't
         # revert the lights status within the following minute. This does require the user to
         # remember to press the button a second time to restore the timer.
-        self.toggle_timer()
-        self._output.toggle()
-        self.logger.debug("Button pressed - Lights on: {}, Timer on: {}".format(self.is_on,
-                                                                                self.timer_on))
+        if self.timer_on:
+            # Stop timer before toggling the light to prevent a double toggle.
+            self.stop_timer()
+            self.toggle()
+        else:
+            # Toggle light before starting the timer to prevent a double toggle.
+            self.toggle()
+            self.start_timer()
+        self.logger.info("Button pressed - Lights on: {}, Timer on: {}".format(self.is_on,
+                                                                               self.timer_on))
