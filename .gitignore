@@ -7,6 +7,9 @@ data
 # Logs
 logs
 
+# Static web content (temperature plot image files, etc.)
+pisces/static/*.png
+
 *.swp
 
 # Byte-compiled / optimized / DLL files
