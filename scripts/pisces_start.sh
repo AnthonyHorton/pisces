@@ -6,7 +6,7 @@ byobu-tmux send-keys -t 0 'cd $PISCES/logs' 'C-m'
 byobu-tmux send-keys -t 0 'grc tail -n 1000 -F pisces.log' 'C-m' # Start watching the log
 
 byobu-tmux send-keys -t 1 'cd $PISCES' 'C-m'
-byobu-tmux send-keys -t 1 -R 'jupyter console' 'C-m'
+byobu-tmux send-keys -t 1 -R 'ipython' 'C-m'
 sleep 10s # Need to wait a while for the console to start, otherwise console commands get lost
 byobu-tmux send-keys -t 1 'from pisces.core import Pisces' 'C-m'
 sleep 3s # Waiting for the import prevents formatting getting messed up
