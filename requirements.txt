@@ -3,5 +3,6 @@ gpiozero
 matplotlib
 pyyaml
 ipython
+Pillow
 adafruit-circuitpython-ads1x15
 adafruit-circuitpython-ssd1306

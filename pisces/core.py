@@ -1,10 +1,11 @@
-from multiprocessing import Process, Event
 import subprocess
 
 from pisces.base import PiscesBase
-from pisces.sensors import TemperatureSensors
-from pisces.control import TemperatureControl
-from pisces.lights import LightsControl
+from pisces.display import Display
+from pisces.lights import LightsContro
+from pisces.temperature import TemperatureControl
+from pisces.water import WaterControl
+from pisces.datalogger import DataLogger
 from pisces.utils import end_process
 
 class Pisces(PiscesBase):
@@ -15,56 +16,77 @@ class Pisces(PiscesBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs) # Load config and configure logging
         self.logger.info("Pisces v{}".format(self.__version__))
-        self._temperature_sensors = TemperatureSensors(self)
-        self._temperature_control = TemperatureControl(self)
-        self._lights_control = LightsControl()
+
+        self._status = {'water_temp': None,
+                        'water_temp_status': 'OK',
+                        'air_temp': None,
+                        'water_level': None,
+                        'water_level_status': 'OK',
+                        'overflow': False,
+                        'lights_auto': True,
+                        'lights_enabled': False,
+                        'fan_auto': True,
+                        'fan_enabled': False,
+                        'pump_auto': True,
+                        'pump_enabled': False}
+
+        self._display = Display(self, **kwargs)
+        self._lights_control = LightsControl(self, **kwargs)        
+        self._temperature_control = TemperatureControl(self, **kwargs)
+        self._water_control = WaterControl(self, **kwargs)
+        self._datalogger = DataLogger(self, **kwargs)
         self._webapp_process = None
+
         self.start_all()
 
     def __del__(self):
         self.stop_all()
 
     @property
-    def current_temperatures(self):
-        return self._temperature_sensors._get_temperatures()
+    def status(self):
+        return self._status
 
-    @property
-    def cooler_on(self):
-        return self._temperature_control.cooler_on
-
-    @property
-    def lights_on(self):
-        return self._lights_control.is_on
+    def update_status(self, update):
+        self._status.update(update)
+        self._display.update()
 
     def start_all(self):
+        self.lights_auto()
+        self.fan_auto()
+        self.pump_auto()
         self.start_logging()
-        self.start_control()
-        self.start_timer()
         self.start_webapp()
 
     def stop_all(self):
-        self.stop_logging()
-        self.stop_control()
-        self.stop_timer()
         self.stop_webapp()
+        self.start_logging()
+        self.pump_manual()
+        self.fan_manual()
+        self.lights_manual()
+
+    def lights_auto(self):
+        self._lights_control.auto_on()
+
+    def lights_manual(self):
+        self._lights_control.auto_off()
+
+    def fan_auto(self):
+        self._temperature_control.auto_on()
+
+    def fan_manual(self):
+        self._temperature_control.auto_off()
+
+    def pump_auto(self):
+        self._water_control.auto_on()
+
+    def pump_manual(self):
+        self._water_control.auto_off()
 
     def start_logging(self):
-        self._temperature_sensors.start_logging()
+        self._datalogger.start_monitoring()
 
     def stop_logging(self):
-        self._temperature_sensors.stop_logging()
-
-    def start_control(self):
-        self._temperature_control.start_control()
-
-    def stop_control(self):
-        self._temperature_control.stop_control()
-
-    def start_timer(self):
-        self._lights_control.start_timer()
-
-    def stop_timer(self):
-        self._lights_control.stop_timer()
+        self._datalogger.stop_monitoring()
 
     def start_webapp(self):
         if self._webapp_process is None:
