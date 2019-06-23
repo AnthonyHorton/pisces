@@ -80,9 +80,9 @@ class Display(PiscesBase):
                 text_colour = 0
                 
             self._image_draw.rectangle((self._left_padding - 1,
-                                        1 * spacing,
+                                        1 * self._spacing,
                                         self._left_padding + 47,
-                                        2 * spacing - 1), outline=rectangle_colour, fill=rectangle_colour)
+                                        2 * self._spacing - 1), outline=rectangle_colour, fill=rectangle_colour)
             self._image_draw.text((self._left_padding, self._top_padding + self._spacing),
                                   "WT:{:2.1f}".format(self._core.status['water_temp']),
                                   font=self._font, fill=text_colour)
@@ -101,9 +101,9 @@ class Display(PiscesBase):
 
         
             self._image_draw.rectangle((self._left_padding - 1,
-                                        2 * spacing,
+                                        2 * self._spacing,
                                         self._left_padding + 53,
-                                        3 * spacing - 1), outline=rectangle_colour, fill=rectangle_colour)
+                                        3 * self._spacing - 1), outline=rectangle_colour, fill=rectangle_colour)
             self._image_draw.text((self._left_padding, self._top_padding + 2 * self._spacing),
                                   "WL:{:2.1f}cm".format(self._core.status['water_level']),
                                   font=self._font, fill=text_colour)        

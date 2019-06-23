@@ -13,11 +13,15 @@ class SubcomponentBase(PiscesBase):
         self._core = pisces_core
         self._name = kwargs['name']
 
+    def _update(self):
+        """This is the method that should do something useful."""
+        raise NotImplementedError
+
 
 class ControlBase(SubcomponentBase):
     def __init__(self, pisces_core, **kwargs):
         super().__init__(pisces_core, **kwargs)
-        self._ouput_name = kwargs['output_name']
+        self._output_name = kwargs['output_name']
         
         self._output = DigitalOutputDevice(int(self.config[self._name][self._output_name]),
                                            initial_value=None)
@@ -64,22 +68,16 @@ class ControlBase(SubcomponentBase):
         else:
             self._status['{}_auto'.format(self._output_name)] = True
             self.logger.info("{} in automatic mode.".format(self._output_name))
-            if self._output.value != self._timer.value:
-                if self._time.value:
-                    self.on()
-                else:
-                    self.off()
-            else:
-                # Only need to call this directly if not changing output status.
-                self._update_status()
+            # Force an update to make sure outputs are immediately put in correct state.
+            self._update()
 
     def auto_off(self):
-        if not self.timer_on:
+        if not self.is_auto:
             self.logger.warning("{} already in manual mode.".format(self._output_name))
         else:
             self._status['{}_auto'.format(self._output_name)] = False
             self.logger.info("{} in manual mode.".format(self._output_name))
-            self._push_status()
+            self._update_status()
 
     def _button_callback(self):
         # Button press cycles through automatic, manual on, manual off states.
@@ -95,12 +93,12 @@ class ControlBase(SubcomponentBase):
             self.auto_on()
 
     def _update_status(self):
-        self._status['{}_enabled'.format(self._output_name)] = self._output.is_enabled
-        self._core._update_status(self._status)
+        self._status['{}_enabled'.format(self._output_name)] = self._output.is_active
+        self._core.update_status(self._status)
 
 
 class PollingBase(SubcomponentBase):
-    def __init__(self, pisces_core, **kwargs)
+    def __init__(self, pisces_core, **kwargs):
         super().__init__(pisces_core, **kwargs)
 
         self._loop_interval = int(self.config[self._name]['loop_interval'])
@@ -117,7 +115,7 @@ class PollingBase(SubcomponentBase):
             self.logger.warning("{} already running.".format(self._name))
         else:
             self._stop_event.clear()
-            self._controller = Process(target=self._control_temperature, daemon=True)
+            self._controller = Process(target=self._monitor, daemon=True)
             self._controller.start()
 
     def stop_monitoring(self):
@@ -141,9 +139,7 @@ class PollingBase(SubcomponentBase):
                 time.sleep(1)
         self.logger.info("{} stopped.".format(self._name))
 
-    def _update(self):
-        """This is the method that should do something usefulk once per loop interval."""
-        raise NotImplementedError
+
 
 
 class ClosedLoopBase(ControlBase, PollingBase):

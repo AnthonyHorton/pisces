@@ -38,15 +38,25 @@ class LightsControl(ControlBase):
     def time_off(self, off_time):
         if not isinstance(off_time, time):
             off_time = datetime.strptime(off_time, "%H:%M").time()
-        self._time_on = on_time
+        self._time_off = off_time
         self._update_timer()
 
     def _update_timer(self):
         self._timer = TimeOfDay(self.time_on, self.time_off, utc=False)  # Work in local time
         self._timer.when_activated = self._on_callback
         self._timer.when_deactivated = self._off_callback
+        # Force an lights update to make sure they're now in sync with the timer.
+        self._update()
+
         self.logger.info("Light timer set - On: {}, Off: {}.".format(self.time_on.strftime("%H:%M"),   
                                                                      self.time_off.strftime("%H:%M")))
+
+    def _update(self):
+        if self._timer.is_active and not self.is_on:
+            self._on_callback()
+        elif self.is_on and not self._timer.is_active:
+            self._off_callback()
+
     def _on_callback(self):
         if self.is_auto:
             self.on()

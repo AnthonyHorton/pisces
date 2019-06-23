@@ -15,8 +15,8 @@ class DataLogger(PollingBase):
 
     def _update(self):
         data = self._core.status
-        data_string = "{:2.3f} {:<4} {:2.3f} {:2.1f} {:<4} {:<5} {:<5} {:<5} {:<5} {:<5} {:<5} {:<5}".format(data.values())
-        self.data_logger.info(data_string)
+        data_string = "{:2.3f} {:<4} {:2.3f} {:2.1f} {:<4} {:<5} {:<5} {:<5} {:<5} {:<5} {:<5} {:<5}".format(*data.values())
+        self._data_logger.info(data_string)
         try:
             plot_log(log_filename=self._log_file,
                      log_interval=self._log_interval,
