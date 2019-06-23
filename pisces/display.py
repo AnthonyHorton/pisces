@@ -84,7 +84,7 @@ class Display(PiscesBase):
                                         self._left_padding + 47,
                                         2 * self._spacing - 1), outline=rectangle_colour, fill=rectangle_colour)
             self._image_draw.text((self._left_padding, self._top_padding + self._spacing),
-                                  "WT:{:2.1f}".format(self._core.status['water_temp']),
+                                  "WT:{:2.1f}C".format(self._core.status['water_temp']),
                                   font=self._font, fill=text_colour)
                 
             self._image_draw.text((self._left_padding, self._top_padding + self._spacing),

@@ -4,7 +4,6 @@ from multiprocessing import Process, Event
 from gpiozero import DigitalOutputDevice, Button
 
 from pisces.base import PiscesBase
-from pisces.sensors import SensorsBase as Sensors
 
 
 class SubcomponentBase(PiscesBase):
@@ -145,7 +144,6 @@ class PollingBase(SubcomponentBase):
 class ClosedLoopBase(ControlBase, PollingBase):
     def __init__(self, pisces_core, **kwargs):
         super().__init__(pisces_core, **kwargs)
-        self._sensors = Sensors(**kwargs)
 
         self._target_max = float(self.config[self._name]['target_max'])
         self._target_min = float(self.config[self._name]['target_min'])

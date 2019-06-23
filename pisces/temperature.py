@@ -1,11 +1,12 @@
 from pisces.control import ClosedLoopBase
-from pisces.sensors import TemperatureSensors as Sensors
+from pisces.sensors import TemperatureSensors
 
 class TemperatureControl(ClosedLoopBase):
     def __init__(self, pisces_core, **kwargs):
         kwargs.update({'name': 'temperature_control',
                        'output_name': 'fan'})
         super().__init__(pisces_core, **kwargs)
+        self._sensors = TemperatureSensors(**kwargs)
 
         self.start_monitoring()
         self.logger.info("Temperature control initialised.")

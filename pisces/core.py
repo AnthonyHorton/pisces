@@ -2,8 +2,8 @@ import subprocess
 
 from pisces.base import PiscesBase
 from pisces.display import Display
-from pisces.lights import LightsControl
-#from pisces.temperature import TemperatureControl
+#from pisces.lights import LightsControl
+from pisces.temperature import TemperatureControl
 #from pisces.water import WaterControl
 from pisces.datalogger import DataLogger
 from pisces.utils import end_process
@@ -31,8 +31,8 @@ class Pisces(PiscesBase):
                         'pump_enabled': False}
 
         self._display = Display(self, **kwargs)
-        self._lights_control = LightsControl(self, **kwargs)        
-#        self._temperature_control = TemperatureControl(self, **kwargs)
+#        self._lights_control = LightsControl(self, **kwargs)        
+        self._temperature_control = TemperatureControl(self, **kwargs)
 #        self._water_control = WaterControl(self, **kwargs)
         self._datalogger = DataLogger(self, **kwargs)
         self._webapp_process = None
@@ -51,18 +51,18 @@ class Pisces(PiscesBase):
         self._display.update()
 
     def start_all(self):
-        self.lights_auto()
-#        self.fan_auto()
+#        self.lights_auto()
+        self.fan_auto()
 #        self.pump_auto()
         self.start_logging()
 #        self.start_webapp()
 
     def stop_all(self):
 #        self.stop_webapp()
-        self.start_logging()
+        self.stop_logging()
 #        self.pump_manual()
-#        self.fan_manual()
-        self.lights_manual()
+        self.fan_manual()
+#        self.lights_manual()
 
     def lights_auto(self):
         self._lights_control.auto_on()

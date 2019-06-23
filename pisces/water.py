@@ -1,13 +1,14 @@
 from gpiozero import DigitalInputDevice
 
 from pisces.control import CloseLoopBase
-from pisces.sensors import WaterLevelSensor as Sensors
+from pisces.sensors import WaterLevelSensor
 
 class WaterControl(ClosedLoopBase):
     def __init__(self, pisces_core, **kwargs):
         kwargs.update({'name': 'water_control',
                        'output_name': 'pump'})
         super().__init__(pisces_core, **kwargs)
+        self._sensors = WaterLevelSensor(**kwargs)
 
         overflow_pin = self.config[self._name]['overflow']
         self._overflow = DigitalInputDevice(int(overflow_pin), bounce_time=1)
