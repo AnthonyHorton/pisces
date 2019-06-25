@@ -1,3 +1,5 @@
+import math
+
 from pisces.control import ClosedLoopBase
 from pisces.sensors import TemperatureSensors
 
@@ -16,19 +18,24 @@ class TemperatureControl(ClosedLoopBase):
 
     def _update(self):
         self._status.update(self._sensors.temperatures)
-        if self._status['water_temp'] > self._target_max:
-            self._status['water_temp_status'] = 'HIGH'
-        elif self._status['water_temp'] < self._target_min:
-            self._status['water_temp_status'] = 'LOW'
-        else:
-            self._status['water_temp_status'] = 'OK'
-
-        if self.is_auto:
-            if self.is_on and self._status['water_temp'] < (self._target_max - self._hysteresis):
+        if math.isnan(self._status['water_temp']):
+            self.logger.warning("Could not read water temperature. Disabling fan.")
+            if self.is_on:
                 self.off()
-            elif not self.is_on and self._status['water_temp'] > self._target_max:
-                self.on()
+        else:
+            if self._status['water_temp'] > self._target_max:
+                self._status['water_temp_status'] = 'HIGH'
+            elif self._status['water_temp'] < self._target_min:
+                self._status['water_temp_status'] = 'LOW'
+            else:
+                self._status['water_temp_status'] = 'OK'
+
+            if self.is_auto:
+                if self.is_on and self._status['water_temp'] < (self._target_max - self._hysteresis):
+                    self.off()
+                elif not self.is_on and self._status['water_temp'] > self._target_max:
+                    self.on()
+                else:
+                    self._update_status()
             else:
                 self._update_status()
-        else:
-            self._update_status()

@@ -17,11 +17,11 @@ class DataLogger(PollingBase):
         data = self._core.status
         data_string = "{:2.3f} {:<4} {:2.3f} {:2.1f} {:<4} {:<5} {:<5} {:<5} {:<5} {:<5} {:<5} {:<5}".format(*data.values())
         self._data_logger.info(data_string)
-        try:
-            plot_log(log_filename=self._log_file,
-                     log_interval=self._log_interval,
-                     **self.config['temperature_sensors']['plotting'])
-        except Exception as err:
+        #try:
+        #    plot_log(log_filename=self._log_file,
+        #             log_interval=self._log_interval,
+        #             **self.config['temperature_sensors']['plotting'])
+        #except Exception as err:
             # Don't want any plotting issues to stop data logging. Log the error, then carry on regardless.
-            self.logger.error("Error updating temperature plot: {}".format(err))
+        #    self.logger.error("Error updating temperature plot: {}".format(err))
 

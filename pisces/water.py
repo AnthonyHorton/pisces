@@ -1,6 +1,6 @@
 from gpiozero import DigitalInputDevice
 
-from pisces.control import CloseLoopBase
+from pisces.control import ClosedLoopBase
 from pisces.sensors import WaterLevelSensor
 
 class WaterControl(ClosedLoopBase):
@@ -12,8 +12,8 @@ class WaterControl(ClosedLoopBase):
 
         overflow_pin = self.config[self._name]['overflow']
         self._overflow = DigitalInputDevice(int(overflow_pin), bounce_time=1)
-        self._overflow.when_activated = self._overflow_detected
-        self._overflow.when_deactivated = self._overflow_ended
+        self._overflow.when_deactivated = self._overflow_detected  # Overflow sensor goes low when overflow detected.
+        self._overflow.when_activated = self._overflow_ended  # Overflow sensor goes high when there's no overflow.
         self._status['overflow'] = self._overflow.is_active
 
         self.logger.debug("Water control initialised.")

@@ -5,7 +5,7 @@ from pisces.base import PiscesBase
 from pisces.display import Display
 from pisces.lights import LightsControl
 from pisces.temperature import TemperatureControl
-#from pisces.water import WaterControl
+from pisces.water import WaterControl
 from pisces.datalogger import DataLogger
 from pisces.utils import end_process
 
@@ -34,7 +34,7 @@ class Pisces(PiscesBase):
         self._display = Display(self, **kwargs)
         self._lights_control = LightsControl(self, **kwargs)        
         self._temperature_control = TemperatureControl(self, **kwargs)
-#        self._water_control = WaterControl(self, **kwargs)
+        self._water_control = WaterControl(self, **kwargs)
         self._datalogger = DataLogger(self, **kwargs)
         self._webapp_process = None
 
