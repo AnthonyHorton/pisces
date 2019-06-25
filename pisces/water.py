@@ -16,8 +16,8 @@ class WaterControl(ClosedLoopBase):
         self._overflow.when_deactivated = self._overflow_ended
         self._status['overflow'] = self._overflow.is_active
 
-        self.start_monitoring()
         self.logger.debug("Water control initialised.")
+        self.start_monitoring()
 
     def __del__(self):
         self.stop_monitoring()
@@ -34,7 +34,7 @@ class WaterControl(ClosedLoopBase):
         if self.is_auto:
             if self.is_on and self._status['water_level'] > (self._target_min + self._hysteresis):
                 self.off()
-            elif self._status['water_level'] < self._target_min:
+            elif not self.is_on and self._status['water_level'] < self._target_min:
                 self.on()
             else:
                 self._update_status()

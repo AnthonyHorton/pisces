@@ -1,5 +1,5 @@
 import time
-from multiprocessing import Process, Event
+from threading import Thread, Event
 
 from gpiozero import DigitalOutputDevice, Button
 
@@ -114,7 +114,7 @@ class PollingBase(SubcomponentBase):
             self.logger.warning("{} already running.".format(self._name))
         else:
             self._stop_event.clear()
-            self._controller = Process(target=self._monitor, daemon=True)
+            self._controller = Thread(target=self._monitor, daemon=True)
             self._controller.start()
 
     def stop_monitoring(self):
@@ -123,10 +123,6 @@ class PollingBase(SubcomponentBase):
         else:
             self._stop_event.set()
             self._controller.join(timeout=5)
-            if self._controller.exitcode is None:
-                self._controller.terminate()
-                if self._controller.exitcode is None:
-                    self._controller.kill()
 
     def _monitor(self):
         self.logger.info("{} starting.".format(self._name))
@@ -137,8 +133,6 @@ class PollingBase(SubcomponentBase):
                     break
                 time.sleep(1)
         self.logger.info("{} stopped.".format(self._name))
-
-
 
 
 class ClosedLoopBase(ControlBase, PollingBase):

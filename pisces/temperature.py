@@ -8,8 +8,8 @@ class TemperatureControl(ClosedLoopBase):
         super().__init__(pisces_core, **kwargs)
         self._sensors = TemperatureSensors(**kwargs)
 
-        self.start_monitoring()
         self.logger.info("Temperature control initialised.")
+        self.start_monitoring()
 
     def __del__(self):
         self.stop_monitoring()
@@ -26,7 +26,7 @@ class TemperatureControl(ClosedLoopBase):
         if self.is_auto:
             if self.is_on and self._status['water_temp'] < (self._target_max - self._hysteresis):
                 self.off()
-            elif self._status['water_temp'] > self._target_max:
+            elif not self.is_on and self._status['water_temp'] > self._target_max:
                 self.on()
             else:
                 self._update_status()

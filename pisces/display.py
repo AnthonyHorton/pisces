@@ -39,6 +39,9 @@ class Display(PiscesBase):
             self.logger.info("PiOLED display initialised.")
             self._initialised = True
 
+    def __del__(self):
+        self.clear()
+
     @property
     def is_initialised(self):
         """Returns True if the status has been successfully initialised, otherwise False."""

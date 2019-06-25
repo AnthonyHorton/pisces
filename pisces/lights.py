@@ -2,10 +2,10 @@ from datetime import datetime, time
 
 from gpiozero import TimeOfDay
 
-from pisces.control import ControlBase
+from pisces.control import ControlBase, PollingBase
 
 
-class LightsControl(ControlBase):
+class LightsControl(ControlBase, PollingBase):
     def __init__(self, pisces_core, **kwargs):
         kwargs.update({'name': 'lights_control',
                        'output_name': 'lights'})
@@ -18,6 +18,10 @@ class LightsControl(ControlBase):
         self._update_timer()
 
         self.logger.info("Lights control initialised.")
+        self.start_monitoring()
+
+    def __del__(self):
+        self.stop_monitoring()
 
     @property
     def time_on(self):
@@ -43,24 +47,14 @@ class LightsControl(ControlBase):
 
     def _update_timer(self):
         self._timer = TimeOfDay(self.time_on, self.time_off, utc=False)  # Work in local time
-        self._timer.when_activated = self._on_callback
-        self._timer.when_deactivated = self._off_callback
+        self.logger.info("Light timer set - On: {}, Off: {}.".format(self.time_on.strftime("%H:%M"),   
+                                                                     self.time_off.strftime("%H:%M")))
         # Force an lights update to make sure they're now in sync with the timer.
         self._update()
 
-        self.logger.info("Light timer set - On: {}, Off: {}.".format(self.time_on.strftime("%H:%M"),   
-                                                                     self.time_off.strftime("%H:%M")))
-
     def _update(self):
-        if self._timer.is_active and not self.is_on:
-            self._on_callback()
-        elif self.is_on and not self._timer.is_active:
-            self._off_callback()
-
-    def _on_callback(self):
         if self.is_auto:
-            self.on()
-
-    def _off_callback(self):
-        if self.is_auto:
-            self.off()
+            if self._timer.is_active and not self.is_on:
+                self.on()
+            elif self.is_on and not self._timer.is_active:
+                self.off()
