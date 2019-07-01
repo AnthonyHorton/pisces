@@ -58,3 +58,7 @@ class LightsControl(ControlBase, PollingBase):
                 self.on()
             elif self.is_on and not self._timer.is_active:
                 self.off()
+            else:
+                self._update_status()
+        else:
+            self._update_status()
