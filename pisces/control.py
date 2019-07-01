@@ -29,7 +29,7 @@ class ControlBase(SubcomponentBase):
 
         button_pin = self.config[self._name].get('button')
         if button_pin:
-            self._button = Button(int(button_pin), bounce_time=0.1)
+            self._button = Button(int(button_pin), bounce_time=0.1, pull_up=False)
             self._button.when_pressed = self._button_callback
         else:
             self._button = None
