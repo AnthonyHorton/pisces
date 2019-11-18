@@ -163,7 +163,10 @@ def plot_log(log_filename='data/pisces.dat',
     ax.plot(log_data['log_time'], log_data['air_temp'], 'c-', label='Air temperature')
     fan_on_times = log_data['log_time'][log_data['fan_enabled'] == True]
     ax.plot(fan_on_times, temp_limits[1] * np.ones(fan_on_times.shape),
-               'yo', label='Fan enabled')
+               'yo', label='Cooling fan on')
+    lights_on_times = log_data['log_time'][log_data['lights_enabled'] == True]
+    ax.plot(lights_on_times, temp_limits[0] * np.ones(lights_on_times.shape),
+            'go', label='Lights on')
     ax.legend(loc=0)
     ax.set_ylabel('Temperature / degC')
     ax.set_ylim(*temp_limits)
