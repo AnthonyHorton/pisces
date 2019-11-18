@@ -96,19 +96,20 @@ def read_log(filename, n_lines=1, max_line_size=120):
                  'pump_auto',
                  'pump_enabled')
     log_dtypes = (datetime,
-                  float,
+                  np.float,
                   'U4',
-                  float,
-                  float,
+                  np.float,
+                  np.float,
                   'U4',
-                  bool,
-                  bool,
-                  bool,
-                  bool,
-                  bool,
-                  bool,
-                  bool)
+                  np.bool,
+                  np.bool,
+                  np.bool,
+                  np.bool,
+                  np.bool,
+                  np.bool,
+                  np.bool)
     time_converter = lambda t: datetime.strptime(t.decode(), "%Y-%m-%dT%H:%M:%S%z")
+    bool_converter = lambda b: bool(int(b))
 
     log_lines = get_last_n_lines(filename, n_lines, max_line_size)
     if len(log_lines) < n_lines:
@@ -127,7 +128,14 @@ def read_log(filename, n_lines=1, max_line_size=120):
     log_data = np.genfromtxt(log_lines,
                              names=log_names,
                              dtype=log_dtypes,
-                             converters={'log_time': time_converter},
+                             converters={'log_time': time_converter,
+                                         'overflow': bool_converter,
+                                         'lights_auto': bool_converter,
+                                         'lights_enabled': bool_converter,
+                                         'fan_auto': bool_converter,
+                                         'fan_enabled': bool_converter,
+                                         'pump_auto': bool_converter,
+                                         'pump_enabled': bool_converter},
                              filling_values=np.nan)
 
     if n_lines == 1:
