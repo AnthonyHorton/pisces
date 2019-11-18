@@ -22,7 +22,7 @@ def index():
     now = datetime.datetime.now(tz=last_reading_datetime.tzinfo)
     time_string = now.strftime("%Y-%m-%d %H:%M")
     last_reading_age = (now - last_reading_datetime).total_seconds()
-    if last_reading_age > current_app.config['pisces_config']['temperature_sensors']['log_interval']:
+    if last_reading_age > current_app.config['pisces_config']['data_logger']['loop_interval']:
         last_colour = 'w3-red'
     else:
         last_colour = 'w3-green'
