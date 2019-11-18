@@ -6,8 +6,8 @@ byobu-tmux split-window -v -p 33
 byobu-tmux send-keys -t 0 'cd $PISCES/logs' 'C-m'
 byobu-tmux send-keys -t 0 'grc tail -n 1000 -F pisces.log' 'C-m' # Start watching the log
 
-byobu-tmux send-keys -t 0 'cd $PISCES/data' 'C-m'
-byobu-tmux send-keys -t 0 'tail -n 1000 -F pisces.dat' 'C-m' # Start watching the data
+byobu-tmux send-keys -t 1 'cd $PISCES/data' 'C-m'
+byobu-tmux send-keys -t 1 'tail -n 1000 -F pisces.dat' 'C-m' # Start watching the data
 
 byobu-tmux send-keys -t 2 'cd $PISCES' 'C-m'
 byobu-tmux send-keys -t 2 -R 'ipython' 'C-m'
