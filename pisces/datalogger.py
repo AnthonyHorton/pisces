@@ -19,7 +19,7 @@ class DataLogger(PollingBase):
         self._data_logger.info(data_string)
         try:
             plot_log(log_filename=self._log_file,
-                     log_interval=self._log_interval,
+                     log_interval=self._loop_interval,
                      **self.config['temperature_sensors']['plotting'])
         except Exception as err:
             # Don't want any plotting issues to stop data logging. Log the error, then carry on regardless.
