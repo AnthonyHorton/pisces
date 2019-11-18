@@ -31,12 +31,14 @@ def index():
     target_max = current_app.config['pisces_config']['temperature_control']['target_max']
     target_min = current_app.config['pisces_config']['temperature_control']['target_min']
 
-    if last_reading['water_temp'] > target_max:
+    if last_reading['water_temp_status'] == 'HIGH':
         water_colour = 'w3-red'
-    elif last_reading['water_temp'] < target_min:
+    elif last_reading['water_temp_status'] == 'LOW':
         water_colour = 'w3-blue'
-    else:
+    elif last_reading['water_temp_status'] == 'OK'
         water_colour = 'w3-green'
+    else:
+        water_colour = 'black'
 
     if last_reading['air_temp'] > target_max:
         air_colour = 'w3-red'
@@ -45,14 +47,14 @@ def index():
     else:
         air_colour = 'w3-green'
 
-    if last_reading['cooler_on']:
+    if last_reading['fan_enabled']:
         cooling_status = 'On'
         cooling_colour = 'w3-yellow'
     else:
         cooling_status = 'Off'
         cooling_colour = 'w3-black'
 
-    if last_reading['lights_on']:
+    if last_reading['lights_enabled']:
         lights_status = 'On'
         lights_colour = 'w3-green'
     else:
