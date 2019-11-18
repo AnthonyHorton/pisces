@@ -90,7 +90,7 @@ def read_log(filename, n_lines=1, max_line_size=120):
                  'water_level_status',
                  'overflow',
                  'lights_auto',
-                 'light_enabled',
+                 'lights_enabled',
                  'fan_auto',
                  'fan_enabled',
                  'pump_auto',
