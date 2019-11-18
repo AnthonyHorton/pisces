@@ -1,7 +1,7 @@
 #!/bin/bash
 byobu-tmux new-session -d -s pisces -n pisces # Create a new detached Byobu session called pisces
 byobu-tmux split-window -v -p 67
-byobu-tmux split-window -v -p 33
+byobu-tmux split-window -v -p 50
 
 byobu-tmux send-keys -t 0 'cd $PISCES/logs' 'C-m'
 byobu-tmux send-keys -t 0 'grc tail -n 1000 -F pisces.log' 'C-m' # Start watching the log

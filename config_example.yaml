@@ -1,34 +1,51 @@
-temperature_sensors:
-  devices:
-    water_temp: /sys/devices/w1_bus_master1/28-011a37371faa/w1_slave
-    air_temp: /sys/devices/w1_bus_master1/28-01c437ed87aa/w1_slave
-  log_interval: 300
+display:
+  width: 128
+  height: 32
+  top_padding: -2
+  left_padding: 4
+  spacing: 8
+
+data_logger:
+  loop_interval: 300  # Seconds
   plotting:
     filename_root: pisces/static/temperature_plot
     temp_limits:
-      - 19
-      - 29
+      - 18
+      - 30
     duration: 24  # Hours
-  
+
+lights_control:
+  time_on: '07:30'
+  time_off: '19:30'
+  lights: 22
+  button: 23
+  loop_interval: 60
+
+temperature_control:
+  temperature_sensors:
+    water_temp: /sys/devices/w1_bus_master1/28-0114379715aa/w1_slave
+    air_temp: /sys/devices/w1_bus_master1/28-011437ed87aa/w1_slave
+  target_max: 26
+  target_min: 25
+  hysteresis: 0.125
+  fan: 27
+  button: 24
+  loop_interval: 60
+
+water_control:
+  water_level_sensor:
+    gain: 4
+  target_max: 99.9
+  target_min: -99.9
+  hysteresis: 50
+  pump: 5
+  button: 25
+  overflow: 6
+  loop_interval: 60
+
 webapp:
   host: 0.0.0.0
   refresh_interval: 150
-
-temperature_control:
-  target_max: 26
-  target_min: 25
-  hysteresis: 0.25
-  good_led: 20
-  hot_led: 21
-  cold_led: 19
-  cooling: 6
-  loop_interval: 60
-
-lights:
-  output: 5
-  time_on: '07:30'
-  time_off: '19:30'
-  button: 17
 
 logging:
   version: 1
@@ -73,4 +90,3 @@ logging:
       level: DEBUG
       handlers:
         - data
-
