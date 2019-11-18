@@ -32,7 +32,7 @@ class Pisces(PiscesBase):
                         'pump_enabled': False}
 
         self._display = Display(self, **kwargs)
-        self._lights_control = LightsControl(self, **kwargs)        
+        self._lights_control = LightsControl(self, **kwargs)
         self._temperature_control = TemperatureControl(self, **kwargs)
         self._water_control = WaterControl(self, **kwargs)
         self._datalogger = DataLogger(self, **kwargs)
@@ -57,10 +57,10 @@ class Pisces(PiscesBase):
 #        self.pump_auto()
         time.sleep(5)  # Give sensors time to get valid readings before logging.
         self.start_logging()
-#        self.start_webapp()
+        self.start_webapp()
 
     def stop_all(self):
-#        self.stop_webapp()
+        self.stop_webapp()
         self.stop_logging()
 #        self.pump_manual()
         self.fan_manual()
