@@ -38,7 +38,7 @@ def index():
     elif last_reading['water_temp_status'] == 'OK':
         water_colour = 'w3-green'
     else:
-        water_colour = 'black'
+        water_colour = 'w3-black'
 
     if last_reading['air_temp'] > target_max:
         air_colour = 'w3-red'
