@@ -162,7 +162,7 @@ def plot_log(log_filename='data/pisces.dat',
     ax.plot(log_data['log_time'], log_data['water_temp'], 'b-', label='Water temperature')
     ax.plot(log_data['log_time'], log_data['air_temp'], 'c-', label='Air temperature')
     fan_on_times = log_data['log_time'][log_data['fan_enabled'] == True]
-    ax.scatter(fan_on_times, temp_limits[1] * np.ones(fan_on_times.shape),
+    ax.plot(fan_on_times, temp_limits[1] * np.ones(fan_on_times.shape),
                'yo', label='Fan enabled')
     ax.legend(loc=0)
     ax.set_ylabel('Temperature / degC')
