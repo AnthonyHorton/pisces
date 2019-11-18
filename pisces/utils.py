@@ -97,10 +97,10 @@ def read_log(filename, n_lines=1, max_line_size=120):
                  'pump_enabled')
     log_dtypes = (datetime,
                   np.float,
-                  string,
+                  str,
                   np.float,
                   np.float,
-                  string,
+                  str,
                   bool,
                   bool,
                   bool,
