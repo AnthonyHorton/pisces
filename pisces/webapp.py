@@ -40,10 +40,10 @@ def index():
     else:
         water_colour = 'w3-black'
 
-    if last_reading['air_temp'] > target_max:
-        air_colour = 'w3-red'
-    elif last_reading['air_temp'] < target_min:
-        air_colour = 'w3-blue'
+    if last_reading['air_temp'] > target_max - 1.5:
+        air_colour = 'w3-orange'
+    elif last_reading['air_temp'] < target_min - 1.5:
+        air_colour = 'w3-cyan'
     else:
         air_colour = 'w3-green'
 

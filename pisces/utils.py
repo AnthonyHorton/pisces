@@ -160,7 +160,7 @@ def plot_log(log_filename='data/pisces.dat',
     FigureCanvas(fig)
     fig.set_size_inches(12, 8)
     ax = fig.add_subplot(1, 1, 1)
-    ax.fill_between(log_data['log_time'], target_limits[0], target_limits[1], color='g', alpha=0.3)
+    ax.fill_between(log_data['log_time'], target_limits[0], target_limits[1], color='g', alpha=0.1)
     ax.plot(log_data['log_time'], log_data['water_temp'], 'b-', label='Water temperature')
     ax.plot(log_data['log_time'], log_data['air_temp'], 'c-', label='Air temperature')
     fan_on_times = log_data['log_time'][log_data['fan_enabled'] == True]
@@ -171,7 +171,8 @@ def plot_log(log_filename='data/pisces.dat',
             'go', label='Lights on')
     ax.legend(loc=0)
     ax.set_xlim(log_data['log_time'].min(), log_data['log_time'].max())
-    ax.set_ylabel('Temperature / degC')
+    ax.set_xlable("Local datetime")
+    ax.set_ylabel(r'Temperature / $\degree$C')
     ax.set_ylim(*temp_limits)
     ax.set_title("Temperatures over {} hours up to {}".format(duration, log_data[-1]['log_time']))
     fig.tight_layout()
