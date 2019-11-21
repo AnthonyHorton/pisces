@@ -171,7 +171,7 @@ def plot_log(log_filename='data/pisces.dat',
             'go', label='Lights on')
     ax.legend(loc=0)
     ax.set_xlim(log_data['log_time'].min(), log_data['log_time'].max())
-    ax.set_xlable("Local datetime")
+    ax.set_xlabel("Local datetime")
     ax.set_ylabel(r'Temperature / $\degree$C')
     ax.set_ylim(*temp_limits)
     ax.set_title("Temperatures over {} hours up to {}".format(duration, log_data[-1]['log_time']))
